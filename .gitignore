@@ -1,0 +1,7 @@
+.lake/
+build/
+web/dist/
+web/node_modules/
+web/public/basic.irpkg
+web/public/vendor/
+npm-debug.log*
