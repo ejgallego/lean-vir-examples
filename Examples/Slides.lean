@@ -10,13 +10,34 @@ open Lean.Vir.Browser
 
 namespace Examples.Slides
 
+private def sourceExcerpt : String :=
+  "@[vir_startup]\n" ++
+  "def mount : DomM Unit := do\n" ++
+  "  let some root ← Document.querySelector \"#vir-slide-root\"\n" ++
+  "    | pure ()\n" ++
+  "  let canvasElement ← Document.createElement \"canvas\"\n" ++
+  "  Element.appendChild root canvasElement\n" ++
+  "  ...\n" ++
+  "  let _ ← Animation.requestAnimationFrame (drawFrame ctx status 0)\n\n" ++
+  "partial def drawFrame ctx status frame _timestamp := do\n" ++
+  "  let phase := frame % 142\n" ++
+  "  let distance := if phase ≤ 71 then phase else 142 - phase\n" ++
+  "  let step := (UInt64.ofNat distance).toFloat\n" ++
+  "  let x := Float.scaleB step 3\n" ++
+  "  CanvasRenderingContext2D.clearRect ctx 0.0 0.0 640.0 360.0\n" ++
+  "  CanvasRenderingContext2D.fillRect ctx x 124.0 72.0 72.0\n" ++
+  "  let _ ← Animation.requestAnimationFrame\n" ++
+  "    (drawFrame ctx status (frame + 1))"
+
 partial def drawFrame
     (ctx : Lean.Vir.Js CanvasRenderingContext2D)
     (status : Lean.Vir.Js Element)
     (frame : Nat)
-    (origin : Float)
-    (timestamp : Float) : DomM Unit := do
-  let x := Float.scaleB (timestamp - origin) (-4)
+    (_timestamp : Float) : DomM Unit := do
+  let phase := frame % 142
+  let distance := if phase ≤ 71 then phase else 142 - phase
+  let step := (UInt64.ofNat distance).toFloat
+  let x := Float.scaleB step 3
   CanvasRenderingContext2D.clearRect ctx 0.0 0.0 640.0 360.0
   CanvasRenderingContext2D.setFillStyle ctx "#5b5bd6"
   CanvasRenderingContext2D.fillRect ctx x 124.0 72.0 72.0
@@ -24,7 +45,7 @@ partial def drawFrame
   CanvasRenderingContext2D.setLineWidth ctx 3.0
   CanvasRenderingContext2D.strokeRect ctx x 124.0 72.0 72.0
   Element.setTextContent status s!"Lean animation frame: {frame}"
-  let _ ← Animation.requestAnimationFrame (drawFrame ctx status (frame + 1) origin)
+  let _ ← Animation.requestAnimationFrame (drawFrame ctx status (frame + 1))
   pure ()
 
 /-- Builds and starts the example slide's HTML and canvas entirely from Lean. -/
@@ -37,23 +58,61 @@ def mount : DomM Unit := do
       Element.ClassList.add root "vir-slide"
 
       let heading ← Document.createElement "h1"
-      Element.setTextContent heading "A slide authored in Lean"
+      Element.setTextContent heading "Lean code, live browser"
       Element.appendChild root heading
 
       let description ← Document.createElement "p"
       Element.ClassList.add description "vir-slide-description"
       Element.setTextContent description
-        "Lean created this heading, description, status line, and animated canvas."
+        "The startup hook creates both sides of this slide, then keeps the canvas moving with a Lean callback."
       Element.appendChild root description
+
+      let split ← Document.createElement "div"
+      Element.ClassList.add split "vir-slide-grid"
+      Element.appendChild root split
+
+      let codePanel ← Document.createElement "section"
+      Element.ClassList.add codePanel "vir-slide-code"
+      Element.appendChild split codePanel
+
+      let codeLabel ← Document.createElement "p"
+      Element.ClassList.add codeLabel "vir-slide-kicker"
+      Element.setTextContent codeLabel "LEAN SOURCE · EXCERPT"
+      Element.appendChild codePanel codeLabel
+
+      let pre ← Document.createElement "pre"
+      let code ← Document.createElement "code"
+      Element.setTextContent code sourceExcerpt
+      Element.appendChild pre code
+      Element.appendChild codePanel pre
+
+      let resultPanel ← Document.createElement "section"
+      Element.ClassList.add resultPanel "vir-slide-result"
+      Element.appendChild split resultPanel
+
+      let resultLabel ← Document.createElement "p"
+      Element.ClassList.add resultLabel "vir-slide-kicker"
+      Element.setTextContent resultLabel "RUNNING IN VIR"
+      Element.appendChild resultPanel resultLabel
+
+      let resultHeading ← Document.createElement "h2"
+      Element.setTextContent resultHeading "Typed DOM and canvas calls"
+      Element.appendChild resultPanel resultHeading
+
+      let resultDescription ← Document.createElement "p"
+      Element.ClassList.add resultDescription "vir-slide-result-description"
+      Element.setTextContent resultDescription
+        "JavaScript loads the package and calls runStartupEntries(). The DOM, drawing, and frame loop stay in Lean."
+      Element.appendChild resultPanel resultDescription
 
       let status ← Document.createElement "p"
       Element.ClassList.add status "vir-slide-status"
       Element.setTextContent status "Starting Lean animation…"
-      Element.appendChild root status
+      Element.appendChild resultPanel status
 
       let canvasElement ← Document.createElement "canvas"
       Element.ClassList.add canvasElement "vir-slide-canvas"
-      Element.appendChild root canvasElement
+      Element.appendChild resultPanel canvasElement
       match ← HTMLCanvasElement.fromElement canvasElement with
       | none => Element.setTextContent status "Lean could not initialize the canvas element"
       | some canvas =>
@@ -62,8 +121,7 @@ def mount : DomM Unit := do
           match ← HTMLCanvasElement.getContext2D canvas with
           | none => Element.setTextContent status "CanvasRenderingContext2D is unavailable"
           | some ctx =>
-              let _ ← Animation.requestAnimationFrame fun timestamp =>
-                drawFrame ctx status 0 timestamp timestamp
+              let _ ← Animation.requestAnimationFrame (drawFrame ctx status 0)
               pure ()
 
 end Examples.Slides
