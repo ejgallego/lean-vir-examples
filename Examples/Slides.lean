@@ -46,10 +46,7 @@ partial def drawFrame
     (timestamp : Float) : DomM Unit := do
   let x := bounceX timestamp
   CanvasRenderingContext2D.clearRect ctx 0.0 0.0 640.0 360.0
-  CanvasRenderingContext2D.setFillStyle ctx "#5b5bd6"
   CanvasRenderingContext2D.fillRect ctx x 124.0 72.0 72.0
-  CanvasRenderingContext2D.setStrokeStyle ctx "#17172b"
-  CanvasRenderingContext2D.setLineWidth ctx 3.0
   CanvasRenderingContext2D.strokeRect ctx x 124.0 72.0 72.0
   Element.setTextContent status s!"Lean animation frame: {frame}"
   let _ ← Animation.requestAnimationFrame (drawFrame ctx status (frame + 1))
@@ -131,6 +128,9 @@ def mount : DomM Unit := do
           match ← HTMLCanvasElement.getContext2D canvas with
           | none => Element.setTextContent status "CanvasRenderingContext2D is unavailable"
           | some ctx =>
+              CanvasRenderingContext2D.setFillStyle ctx "#5b5bd6"
+              CanvasRenderingContext2D.setStrokeStyle ctx "#17172b"
+              CanvasRenderingContext2D.setLineWidth ctx 3.0
               let _ ← Animation.requestAnimationFrame (drawFrame ctx status 0)
               pure ()
 

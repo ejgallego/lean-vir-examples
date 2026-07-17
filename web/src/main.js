@@ -11,8 +11,6 @@ const valuesInput = document.querySelector("#values");
 const nameInput = document.querySelector("#name");
 const output = document.querySelector("#output");
 
-const vir = await loadVirPackage("basic");
-
 function parseValues(text) {
   return text
     .replace(/[\[\]]/g, " ")
@@ -26,21 +24,32 @@ function parseValues(text) {
     });
 }
 
-function run() {
-  const values = parseValues(valuesInput.value);
-  const name = nameInput.value;
-  const total = vir.call("Examples.Basic.total", values);
-  const greeting = vir.call("Examples.Basic.greeting", name);
-  output.textContent = JSON.stringify({ total, greeting }, null, 2);
+function showError(error) {
+  output.textContent = error.stack ?? String(error);
 }
 
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  try {
-    run();
-  } catch (error) {
-    output.textContent = error.stack ?? String(error);
-  }
-});
+try {
+  const vir = await loadVirPackage("basic");
+  window.addEventListener("pagehide", () => vir.dispose(), { once: true });
 
-run();
+  function run() {
+    const values = parseValues(valuesInput.value);
+    const name = nameInput.value;
+    const total = vir.call("Examples.Basic.total", values);
+    const greeting = vir.call("Examples.Basic.greeting", name);
+    output.textContent = JSON.stringify({ total, greeting }, null, 2);
+  }
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    try {
+      run();
+    } catch (error) {
+      showError(error);
+    }
+  });
+
+  run();
+} catch (error) {
+  showError(error);
+}
