@@ -6,10 +6,10 @@ Author: Emilio J. Gallego Arias
 
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
-import { createVirRuntimeFactory, createVirtualDocumentState } from "../web/public/vendor/lean-vir/js/vir-runtime-node.js";
+import { createVirRuntimeFactory, createVirtualDocumentState } from "../.lake/build/vir/sdk/js/vir-runtime-node.js";
 
-const wasmBytes = await readFile(new URL("../web/public/vendor/lean-vir/wasm/vir-upstream.wasm", import.meta.url));
-const irPackageBytes = await readFile(new URL("../web/public/basic.irpkg", import.meta.url));
+const wasmBytes = await readFile(new URL("../.lake/build/vir/sdk/wasm/vir-upstream.wasm", import.meta.url));
+const irPackageBytes = await readFile(new URL("../.lake/build/vir/modules/Examples/Basic.irpkg", import.meta.url));
 const virtualDocumentState = createVirtualDocumentState({ title: "initial" });
 const factory = createVirRuntimeFactory({ wasmBytes, virtualDocumentState });
 const vir = await factory.createRuntime({ irPackageBytes });

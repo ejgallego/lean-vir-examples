@@ -2,6 +2,6 @@
 build/
 web/dist/
 web/node_modules/
-web/public/basic.irpkg
-web/public/vendor/
+web/public/vir/
+web/src/generated/
 npm-debug.log*

@@ -8,7 +8,7 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-lean_vir_commit="$(
+lean_vir_commit="${VIR_SDK_COMMIT:-$(
   node -e '
     const fs = require("node:fs");
     const manifest = JSON.parse(fs.readFileSync("lake-manifest.json", "utf8"));
@@ -19,16 +19,17 @@ lean_vir_commit="$(
     }
     console.log(dep.rev);
   '
-)"
+)}"
 
-if [[ $# -gt 0 ]]; then
-  lake exe lean_vir/vir_fetch_sdk \
-    --archive "$1" \
-    --expect-commit "$lean_vir_commit" \
-    --out web/public/vendor/lean-vir
-else
-  lake exe lean_vir/vir_fetch_sdk \
-    --commit "$lean_vir_commit" \
-    --repo ejgallego/lean-vir \
-    --out web/public/vendor/lean-vir
-fi
+VIR_SDK_COMMIT="$lean_vir_commit" lake build \
+  +Examples.Basic:vir \
+  +Examples.Slides:vir \
+  :virSdk
+
+rm -rf web/public/vir web/src/generated/vir-sdk
+mkdir -p web/public/vir/modules
+cp .lake/build/vir/modules/Examples/Basic.irpkg web/public/vir/modules/basic.irpkg
+cp .lake/build/vir/modules/Examples/Slides.irpkg web/public/vir/modules/slides.irpkg
+mkdir -p web/public/vir/sdk web/src/generated/vir-sdk
+cp -R .lake/build/vir/sdk/wasm web/public/vir/sdk/wasm
+cp -R .lake/build/vir/sdk/js web/src/generated/vir-sdk/js

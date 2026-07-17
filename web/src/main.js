@@ -4,17 +4,14 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Author: Emilio J. Gallego Arias
 */
 
-const { createVirRuntime } = await import(/* @vite-ignore */ "/vendor/lean-vir/js/vir-runtime.js");
+import { loadVirPackage } from "./vir.js";
 
 const form = document.querySelector("#demo-form");
 const valuesInput = document.querySelector("#values");
 const nameInput = document.querySelector("#name");
 const output = document.querySelector("#output");
 
-const vir = await createVirRuntime({
-  wasmUrl: "/vendor/lean-vir/wasm/vir-upstream.wasm",
-  irPackageUrl: "/basic.irpkg",
-});
+const vir = await loadVirPackage("basic");
 
 function parseValues(text) {
   return text
