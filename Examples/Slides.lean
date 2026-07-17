@@ -10,6 +10,10 @@ open Lean.Vir.Browser
 
 namespace Examples.Slides
 
+/--
+An intentionally abbreviated excerpt for the slide. Keep it focused on the
+public VIR workflow instead of mirroring `drawFrame` line for line.
+-/
 private def sourceExcerpt : String :=
   "@[vir_startup]\n" ++
   "def mount : DomM Unit := do\n" ++
@@ -19,25 +23,28 @@ private def sourceExcerpt : String :=
   "  Element.appendChild root canvasElement\n" ++
   "  ...\n" ++
   "  let _ ← Animation.requestAnimationFrame (drawFrame ctx status 0)\n\n" ++
-  "partial def drawFrame ctx status frame _timestamp := do\n" ++
-  "  let phase := frame % 142\n" ++
-  "  let distance := if phase ≤ 71 then phase else 142 - phase\n" ++
-  "  let step := (UInt64.ofNat distance).toFloat\n" ++
-  "  let x := Float.scaleB step 3\n" ++
+  "partial def drawFrame ctx status frame timestamp := do\n" ++
+  "  let x := bounceX timestamp\n" ++
   "  CanvasRenderingContext2D.clearRect ctx 0.0 0.0 640.0 360.0\n" ++
   "  CanvasRenderingContext2D.fillRect ctx x 124.0 72.0 72.0\n" ++
   "  let _ ← Animation.requestAnimationFrame\n" ++
   "    (drawFrame ctx status (frame + 1))"
 
+/-- A time-based triangular wave spanning the drawable canvas width. -/
+private def bounceX (timestamp : Float) : Float :=
+  -- At 250 pixels/second, the rectangle crosses the 568-pixel span in 2272 ms.
+  let halfPeriodMs := 2272
+  let periodMs := 2 * halfPeriodMs
+  let phaseMs := timestamp.toUInt32.toNat % periodMs
+  let distanceMs := if phaseMs ≤ halfPeriodMs then phaseMs else periodMs - phaseMs
+  Float.scaleB (UInt64.ofNat distanceMs).toFloat (-2)
+
 partial def drawFrame
     (ctx : Lean.Vir.Js CanvasRenderingContext2D)
     (status : Lean.Vir.Js Element)
     (frame : Nat)
-    (_timestamp : Float) : DomM Unit := do
-  let phase := frame % 142
-  let distance := if phase ≤ 71 then phase else 142 - phase
-  let step := (UInt64.ofNat distance).toFloat
-  let x := Float.scaleB step 3
+    (timestamp : Float) : DomM Unit := do
+  let x := bounceX timestamp
   CanvasRenderingContext2D.clearRect ctx 0.0 0.0 640.0 360.0
   CanvasRenderingContext2D.setFillStyle ctx "#5b5bd6"
   CanvasRenderingContext2D.fillRect ctx x 124.0 72.0 72.0
@@ -112,6 +119,9 @@ def mount : DomM Unit := do
 
       let canvasElement ← Document.createElement "canvas"
       Element.ClassList.add canvasElement "vir-slide-canvas"
+      Element.setAttribute canvasElement "role" "img"
+      Element.setAttribute canvasElement "aria-label"
+        "A purple rectangle bouncing horizontally across a canvas"
       Element.appendChild resultPanel canvasElement
       match ← HTMLCanvasElement.fromElement canvasElement with
       | none => Element.setTextContent status "Lean could not initialize the canvas element"

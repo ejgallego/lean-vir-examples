@@ -26,10 +26,11 @@ VIR_SDK_COMMIT="$lean_vir_commit" lake build \
   +Examples.Slides:vir \
   :virSdk
 
-rm -rf web/public/vir web/src/generated/vir-sdk
-mkdir -p web/public/vir/modules
+mkdir -p \
+  web/public/vir/modules \
+  web/public/vir/sdk/wasm \
+  web/src/generated/vir-sdk/js
 cp .lake/build/vir/modules/Examples/Basic.irpkg web/public/vir/modules/basic.irpkg
 cp .lake/build/vir/modules/Examples/Slides.irpkg web/public/vir/modules/slides.irpkg
-mkdir -p web/public/vir/sdk web/src/generated/vir-sdk
-cp -R .lake/build/vir/sdk/wasm web/public/vir/sdk/wasm
-cp -R .lake/build/vir/sdk/js web/src/generated/vir-sdk/js
+cp -R .lake/build/vir/sdk/wasm/. web/public/vir/sdk/wasm
+cp -R .lake/build/vir/sdk/js/. web/src/generated/vir-sdk/js

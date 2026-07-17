@@ -33,8 +33,8 @@ For local development next to a `lean-vir` checkout, provide its SDK archive
 without waiting for GitHub Actions:
 
 ```bash
-(cd ../vir && npm run build:sdk-artifact)
-VIR_SDK_ARCHIVE=../vir/build/artifacts/lean-vir-sdk.tar.gz scripts/prepare-web.sh
+(cd ../lean-vir && npm run build:sdk-artifact)
+VIR_SDK_ARCHIVE=../lean-vir/build/artifacts/lean-vir-sdk.tar.gz scripts/prepare-web.sh
 ```
 
 ## Run in the browser
@@ -49,8 +49,9 @@ Then open:
   [`Examples/Basic.lean`](Examples/Basic.lean).
 - <http://127.0.0.1:5173/slides.html> for the startup hook in
   [`Examples/Slides.lean`](Examples/Slides.lean). Lean creates the slide's
-  heading, copy, status, canvas, and animation; JavaScript only loads the
-  package and calls `vir.runStartupEntries()`.
+  vertical source/result split, copy, status, accessible canvas, and
+  time-based bouncing animation; JavaScript only loads the package and calls
+  `vir.runStartupEntries()`.
 
 ## Lean entrypoints
 
