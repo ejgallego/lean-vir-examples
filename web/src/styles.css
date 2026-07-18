@@ -1,0 +1,157 @@
+:root {
+  color: #17172b;
+  background: #f4f1ea;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-synthesis: none;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  box-sizing: border-box;
+  max-width: 52rem;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+  max-width: 28rem;
+}
+
+label {
+  display: grid;
+  gap: 0.35rem;
+}
+
+input,
+button {
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+}
+
+a {
+  color: #4949b8;
+}
+
+.slide-shell {
+  max-width: 78rem;
+}
+
+.vir-slide {
+  margin-top: 2rem;
+  padding: clamp(2rem, 4vw, 3.5rem);
+  overflow: hidden;
+  border: 1px solid #d8d2c5;
+  border-radius: 1.5rem;
+  background: #fffdf8;
+  box-shadow: 0 1rem 3rem rgb(23 23 43 / 10%);
+}
+
+.vir-slide h1 {
+  margin: 0;
+  font-family: Georgia, ui-serif, serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  line-height: 1;
+}
+
+.vir-slide-description {
+  max-width: 52rem;
+  margin-bottom: 0;
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+
+.vir-slide-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #d8d2c5;
+}
+
+.vir-slide-code {
+  min-width: 0;
+  padding: 1.5rem;
+  overflow: hidden;
+  border-radius: 0.9rem;
+  color: #e8e5ff;
+  background: #17172b;
+}
+
+.vir-slide-kicker {
+  margin: 0 0 1rem;
+  color: #7772e8;
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
+.vir-slide-code pre {
+  margin: 0;
+  overflow-x: auto;
+  font-size: clamp(0.7rem, 0.85vw, 0.82rem);
+  line-height: 1.55;
+}
+
+.vir-slide-code code {
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
+.vir-slide-result {
+  min-width: 0;
+  padding-left: clamp(1.5rem, 3vw, 2.5rem);
+  border-left: 1px solid #d8d2c5;
+}
+
+.vir-slide-result h2 {
+  margin: 0;
+  font-family: Georgia, ui-serif, serif;
+  font-size: clamp(1.6rem, 3vw, 2.35rem);
+}
+
+.vir-slide-result-description {
+  margin-bottom: 1.25rem;
+  color: #514e60;
+  line-height: 1.5;
+}
+
+.vir-slide-status {
+  color: #5b5bd6;
+  font-family: ui-monospace, monospace;
+}
+
+.vir-slide-canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  background: #ebe8ff;
+}
+
+#runtime-status {
+  color: #686579;
+}
+
+.runtime-error {
+  color: #a32020 !important;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 52rem) {
+  .vir-slide-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .vir-slide-result {
+    padding-top: 2rem;
+    padding-left: 0;
+    border-top: 1px solid #d8d2c5;
+    border-left: 0;
+  }
+}

@@ -5,3 +5,4 @@ Author: Emilio J. Gallego Arias
 -/
 
 import Examples.Basic
+import Examples.Slides
