@@ -4,7 +4,7 @@ open Lake DSL
 package lean_vir_examples where
 
 require lean_vir from git
-  "https://github.com/ejgallego/lean-vir" @ "a5947808e93b232dc886ded466b211de81f4b023"
+  "https://github.com/ejgallego/lean-vir" @ "f76efcc3467b3a64c67460b2e3478441b73f30c2"
 
 @[default_target]
 lean_lib Examples where
